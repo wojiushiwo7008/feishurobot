@@ -45,12 +45,16 @@ class FeishuService {
     try {
       const token = await this.getTenantAccessToken();
 
+      const payload = {
+        content: JSON.stringify({ text: content }),
+        msg_type: 'text'
+      };
+
+      console.log('Sending message payload:', JSON.stringify(payload));
+
       const response = await axios.post(
         `https://open.feishu.cn/open-apis/im/v1/messages/${messageId}/reply`,
-        {
-          content: JSON.stringify({ text: content }),
-          msg_type: 'text'
-        },
+        payload,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -67,6 +71,9 @@ class FeishuService {
       }
     } catch (error) {
       console.error('Error sending message:', error.message);
+      if (error.response) {
+        console.error('API Error detail:', JSON.stringify(error.response.data));
+      }
       throw error;
     }
   }
