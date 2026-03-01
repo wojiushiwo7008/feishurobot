@@ -38,7 +38,7 @@ Configure your Feishu app event subscription URL to: `http://your-server:3000/we
 
 第五步：验证成功push到github
 
-遇到的最大问题就是json文件传入不对排查了好一会，claude code说是权限问题，我把截图都给他，判断出是json问题
+遇到的最大问题就是json文件格式传入不对排查了好一会，claude code说是权限问题，我把截图都给他，判断出是json格式问题
 
 <img width="782" height="760" alt="image" src="https://github.com/user-attachments/assets/d73f3dad-480e-4caf-b3b3-68e89ccd09f4" />
 
