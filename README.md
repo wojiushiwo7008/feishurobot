@@ -35,4 +35,5 @@ Configure your Feishu app event subscription URL to: `http://your-server:3000/we
 
 遇到的最大问题就是json文件传入不对排查了好一会，claude code说是权限问题，我把截图都给他，判断出是json问题
 
-![alt text](image-1.png)
+
+<img width="760" height="753" alt="image" src="https://github.com/user-attachments/assets/1fd562fb-c36a-4082-8cd1-3990c9ee8e2d" />
