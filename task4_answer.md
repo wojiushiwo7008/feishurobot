@@ -215,8 +215,6 @@ Ticket 3：工单数据模型与创建接口（DB 落地 + 幂等 + 状态机初
 - （可选）Landlord 映射数据
   - landlord_id / landlord_name / contact / property_id 等（MVP 可只落 landlord_id=sender_id）
 
----
-
 ### 输出
 - `WorkOrder`（创建成功）
   - order_id: string/number
@@ -232,8 +230,6 @@ Ticket 3：工单数据模型与创建接口（DB 落地 + 幂等 + 状态机初
   - 返回已存在工单的 order_id（而不是新建）
 - 若不满足建单条件（is_repair=false 或 confidence < 阈值）
   - 返回 “skipped” 且不产生副作用
-
----
 
 ### 数据模型建议（最小字段）
 `work_orders`
@@ -254,15 +250,11 @@ Ticket 3：工单数据模型与创建接口（DB 落地 + 幂等 + 状态机初
 - phone
 - default_chat_id
 - property_id
-
----
-
+  
 ### 幂等与并发安全策略
 - DB 层：`source_message_id` 唯一约束（最可靠）
 - Redis 层（可选增强）：`SETNX dedup:feishu_msg:{message_id}` TTL 7 天，加速挡掉重复回调
 - 工单创建必须保证“创建/返回已存在”的行为是可重复执行且结果一致的（Idempotent）
-
----
 
 ### 验收标准
 1.正常建单成功
@@ -314,8 +306,6 @@ Ticket 4：自动派单系统（师傅匹配 + 通知发送 + 状态流转 + 幂
 4）状态机与并发安全：确保同一工单只能被成功派单一次（幂等），并在并发 worker 场景下不重复派单  
 5）失败兜底：无师傅匹配、通知发送失败、更新状态失败时的回退与告警
 
----
-
 ### 输入
 - `WorkOrder`（来自 Ticket 3）
   - order_id
@@ -327,8 +317,6 @@ Ticket 4：自动派单系统（师傅匹配 + 通知发送 + 状态流转 + 幂
   - chat_id
   - created_at
 
----
-
 ### 输出
 - `AssignmentResult`
   - order_id
@@ -339,8 +327,6 @@ Ticket 4：自动派单系统（师傅匹配 + 通知发送 + 状态流转 + 幂
 - 同时写入持久层：
   - 工单状态更新（pending_assignment → in_progress）
   - 指派记录（order_id, assignee_id, assigned_at, assigned_by=system）
-
----
 
 ### 数据模型建议
 `technicians`
@@ -360,8 +346,6 @@ Ticket 4：自动派单系统（师傅匹配 + 通知发送 + 状态流转 + 幂
 - assigned_by ("system")
 - dispatch_message_id
 - status ("active"/"reassigned", optional)
-
----
 
 ### 匹配策略（默认方案）
 1.按 category 过滤：只选具备该类别技能的师傅
