@@ -27,23 +27,42 @@ Ticket 1：接入飞书群消息事件并做基础校验与解析
   - `raw_event`: object（可选：保留原始 payload 便于排查）
 
 **验收标准**  
+
 1.URL 校验成功：飞书 url_verification 请求能返回正确 challenge，开放平台显示“校验通过/订阅成功”
+
 2.事件类型过滤正确：仅处理 im.message.receive_v1，其他事件类型进入日志但不触发后续业务
+
 3.文本消息解析正确：收到群文本消息时，能正确解析并输出 message_id、chat_id、sender_id、text、create_time（日志可见）
+
 4.消息类型兼容：对 image/file/post 等非 text 消息，服务端返回 200 且记录“unsupported message_type=xxx”，不抛异常、不阻塞后续消息
+
 5.Token 校验生效：verification token 不匹配时，服务端不做业务处理；日志中包含事件摘要（event_type、chat_id、message_id）用于排查
+
 6.响应时延达标：在本地/测试环境连续发送 20 条消息，服务端回调接口平均响应时间 < 500ms，且无超时（避免飞书重试）
-7.稳定返回 200：即便内部解析失败/下游异常（例如 JSON parse error），接口依旧返回 200（或按你们策略），并输出可定位的错误日志（避免飞书持续重试打爆）
+
+7.稳定返回 200：即便内部解析失败/下游异常（例如 JSON parse error），接口依旧返回 200（或按你们策略），并输出可定位的错误日志（避免飞书
+持续重试打爆）
+
 8.日志可观测性：每条入站事件必须至少输出一条结构化日志，包含：
+
 request_id（或 trace_id）
+
 event_type
+
 message_id
+
 chat_id
+
 sender_id
+
 handled=true/false（是否进入业务链路）
+
 9.幂等字段就绪：能从回调中稳定获取 message_id（或等价唯一键），为后续“去重/幂等建单”提供基础
+
 10.回调安全性：请求体大小超限会被拒绝或截断（例如 >2MB 返回 413 或记录并忽略），服务不崩溃
+
 11.配置错误可诊断：当 APP_ID/APP_SECRET 未配置或错误时，启动时能给出清晰提示；运行时遇到 token 获取失败能输出明确错误（http code + Feishu code/msg）
+
 12.开发自测脚本可跑：提供最小自测方式（curl/本地 mock JSON），能模拟 url_verification 和 im.message.receive_v1 事件并通过验收
 
 保证飞书回调可用、稳定、可观测、可追踪，否则后续工单链路都不可靠。
