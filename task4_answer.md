@@ -199,8 +199,6 @@ Ticket 3：工单数据模型与创建接口（DB 落地 + 幂等 + 状态机初
 同时约定工单状态机初始值：
 - `pending_assignment`（待派单）→ 后续由派单 Ticket 更新为 `in_progress`（处理中）→ `done`（已完成）
 
----
-
 ### 输入
 - `RepairIntent`
   - message_id: string
